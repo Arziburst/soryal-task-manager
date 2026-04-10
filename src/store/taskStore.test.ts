@@ -22,6 +22,17 @@ describe('taskStore', () => {
     expect(tasks[0].id).toBeDefined()
   })
 
+  it('trims title and description', () => {
+    useTaskStore.getState().addTask({
+      title: '  Trimmed  ',
+      description: '  desc  ',
+      priority: 'medium',
+    })
+    const t = useTaskStore.getState().tasks[0]
+    expect(t.title).toBe('Trimmed')
+    expect(t.description).toBe('desc')
+  })
+
   it('moves a task to completed', () => {
     useTaskStore.getState().addTask({
       title: 'Ship feature',
@@ -34,5 +45,47 @@ describe('taskStore', () => {
 
     const updated = useTaskStore.getState().tasks[0]
     expect(updated.status).toBe('completed')
+  })
+
+  it('moves a task to in progress', () => {
+    useTaskStore.getState().addTask({
+      title: 'WIP',
+      description: '',
+      priority: 'low',
+    })
+    const id = useTaskStore.getState().tasks[0].id
+    useTaskStore.getState().setTaskStatus(id, 'in_progress')
+    expect(useTaskStore.getState().tasks[0].status).toBe('in_progress')
+  })
+
+  it('ignores setTaskStatus for unknown id', () => {
+    useTaskStore.getState().addTask({
+      title: 'Stable',
+      description: '',
+      priority: 'low',
+    })
+    const before = useTaskStore.getState().tasks[0]
+    useTaskStore.getState().setTaskStatus('no-such-id', 'completed')
+    const after = useTaskStore.getState().tasks[0]
+    expect(after).toEqual(before)
+  })
+
+  it('deletes a task by id', () => {
+    useTaskStore.getState().addTask({
+      title: 'A',
+      description: '',
+      priority: 'low',
+    })
+    useTaskStore.getState().addTask({
+      title: 'B',
+      description: '',
+      priority: 'low',
+    })
+    const idA = useTaskStore.getState().tasks.find((t) => t.title === 'A')!.id
+
+    useTaskStore.getState().deleteTask(idA)
+
+    const titles = useTaskStore.getState().tasks.map((t) => t.title)
+    expect(titles).toEqual(['B'])
   })
 })
