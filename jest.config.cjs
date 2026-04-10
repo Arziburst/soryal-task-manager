@@ -4,7 +4,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testMatch: ['**/*.test.ts', '**/*.test.tsx'],
   moduleNameMapper: {
-    '\\.css$': '<rootDir>/src/test/styleMock.ts',
+    '\\.css$': '<rootDir>/styleMock.cjs',
   },
   transform: {
     '^.+\\.tsx?$': [
